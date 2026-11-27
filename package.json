@@ -1,0 +1,10 @@
+{
+  "name": "antigravity-hakimi-win",
+  "version": "0.1.0-dev",
+  "private": true,
+  "description": "Windows x64 client development for Antigravity Hakimi",
+  "engines": { "node": ">=22.4.0" },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/windows-base.test.js"
+  }
+}
