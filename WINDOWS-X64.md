@@ -23,7 +23,7 @@
 - 安装器 170273968 字节，系统验签结果为 `Valid`，签名者为 `Google LLC`。SHA-256 为 `1C66F68FA45E9EBC55AEC5479617A9EEAA305BA8B16A1BEE8327B8BAD9D10258`。提取出的 `Antigravity.exe` 单文件检查结果为 `NotSigned`，来源由外层安装器签名核验。
 - 官方 ASAR 清单的版本为 `2.35.2`，主入口为 `dist/main.js`。ASAR 头部 SHA-256 为 `51bed21d0cf02941b90ed0cd74d66fb31bc4f70ac24119362548216c791c55bb`。副本包含 `locales/zh-CN.pak`；它是 Chromium 语言资源，应用菜单需单独验证。
 - 2.35.2 的 `dist/main.js` 调用 `setupApplicationMenu`。`dist/menu.js` 向 File 菜单添加 `New Window`，快捷键为 `CmdOrCtrl+Shift+N`。仓库的 `payload/dist/i18n/zh-CN.json` 已有“新建窗口”。同一模块还用英文标签定位父菜单；M1 首先处理子项显示，保留菜单查找、快捷键及点击行为。
-- 官方底包保留在 `.stage/windows-x64/2.35.2`；独立开发版输出至 `.stage/Hakimi-win32-x64`。运行时采用 Electron 44.9.1，按独立产品身份打包、校验应用资源；便携版内置更新状态为 disabled。交互和发布安装包仍待验收。
+- 官方底包保留在 `.stage/windows-x64/2.35.2`；独立开发版输出至 `.stage/Hakimi-win32-x64-0.1.1`。运行时采用 Electron 44.9.1，按独立产品身份打包、校验应用资源；便携版内置更新状态为 disabled。交互和发布安装包仍待验收。
 
 ## 本地复现
 

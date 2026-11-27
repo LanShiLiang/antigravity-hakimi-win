@@ -1,19 +1,20 @@
 {
   "name": "antigravity-hakimi-win",
-  "version": "0.1.0-dev",
+  "version": "0.1.1-dev",
   "private": true,
   "description": "Windows x64 client development for Antigravity Hakimi",
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
-    "test": "node --test --test-concurrency=1 test/windows-base.test.js",
+    "test": "node --test --test-concurrency=1 test/windows-base.test.js test/code-login.test.js",
     "build:win": "node scripts/build-windows.mjs",
     "check:win": "node scripts/check-windows.mjs"
   },
   "devDependencies": {
     "@electron/fuses": "2.1.3",
-    "@electron/packager": "20.3.0"
+    "@electron/packager": "20.3.0",
+    "jsdom": "26.1.0"
   },
   "license": "MIT"
 }

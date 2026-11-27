@@ -6,11 +6,12 @@ import { fileURLToPath } from 'node:url';
 import { packager } from '@electron/packager';
 import { flipFuses, FuseVersion, FuseV1Options } from '@electron/fuses';
 import engine from '../payload/dist/asar-engine.js';
+import codeLogin from '../client/code-login.cjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const stage = path.join(root, '.stage');
 const base = path.join(stage, 'windows-x64', '2.35.2', 'resources');
-const destination = path.join(stage, 'Hakimi-win32-x64');
+const destination = path.join(stage, 'Hakimi-win32-x64-0.1.1');
 const asarDigest = 'e057115571cf5085406d20f2427a5afac272b712ec84332c7157da0113d4b2d0';
 const backendDigest = 'fcdf7454007c6edc8162e601628c28cc1e6f575be849f329bb864c41ba6e6b02';
 
@@ -59,6 +60,12 @@ async function prepareApp(job) {
   manifest.productName = 'Antigravity Hakimi Win';
   manifest.main = 'hakimi-main.cjs';
   fs.writeFileSync(manifestFile, JSON.stringify(manifest, null, 2));
+  // The supplied preload runs sandboxed and cannot require local modules.
+  const preloadFile = path.join(dir, 'dist', 'preload.js');
+  const preload = fs.readFileSync(preloadFile, 'utf8');
+  if (!preload.includes('const isRemoteWindow = process.argv')) throw new Error('Unsupported Hub preload');
+  fs.appendFileSync(preloadFile, '\n;if (process.isMainFrame && !isRemoteWindow) (' +
+    codeLogin.installCodeLogin.toString() + ')(window);\n');
   const menu = path.join(dir, 'dist', 'menu.js');
   const source = fs.readFileSync(menu, 'utf8');
   const label = "label: 'New Window',";
@@ -71,6 +78,7 @@ async function prepareApp(job) {
     .replace(parentMatch, "(item.role?.toLowerCase() === 'filemenu' && submenuLabel === 'File') || item.label === submenuLabel");
   fs.writeFileSync(menu, localized);
   fs.copyFileSync(path.join(root, 'client/main.cjs'), path.join(dir, manifest.main));
+  fs.copyFileSync(path.join(root, 'test/packaged-login-check.cjs'), path.join(dir, 'hakimi-check-login.cjs'));
   // The portable build has no installer feed of its own.
   fs.renameSync(path.join(dir, 'dist/updater.js'), path.join(dir, 'dist/google-updater.js'));
   fs.copyFileSync(path.join(root, 'client/portable-updater.cjs'), path.join(dir, 'dist/updater.js'));
@@ -88,7 +96,7 @@ async function build() {
     const [built] = await packager({
       dir, out: path.join(job, 'out'), platform: 'win32', arch: 'x64',
       electronVersion: '44.9.1', name: 'Hakimi', executableName: 'Hakimi',
-      appVersion: '0.1.0', win32metadata: { CompanyName: 'antigravity-hakimi-win contributors', ProductName: 'Antigravity Hakimi Win' },
+      appVersion: '0.1.1', win32metadata: { CompanyName: 'antigravity-hakimi-win contributors', ProductName: 'Antigravity Hakimi Win' },
       asar: { unpackDir: 'node_modules/chrome-devtools-mcp' }, prune: false, extraResource: [bin],
     });
     await flipFuses(path.join(built, 'Hakimi.exe'), {

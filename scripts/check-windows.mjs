@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { getCurrentFuseWire, FuseState, FuseV1Options } from '@electron/fuses';
 
 const stage = fileURLToPath(new URL('../.stage', import.meta.url));
-const exe = path.join(stage, 'Hakimi-win32-x64', 'Hakimi.exe');
+const exe = path.join(stage, 'Hakimi-win32-x64-0.1.1', 'Hakimi.exe');
 const wire = await getCurrentFuseWire(exe);
 assert.equal(wire[FuseV1Options.OnlyLoadAppFromAsar], FuseState.ENABLE);
 assert.equal(wire[FuseV1Options.EnableEmbeddedAsarIntegrityValidation], FuseState.ENABLE);
@@ -34,7 +34,9 @@ try {
   const result = stdout.trim().split(/\r?\n/).filter(line => line.startsWith('{')).map(line => JSON.parse(line)).at(-1);
   assert.equal(result?.menu, '新建窗口', 'Expected a native menu report. ' + stderr + stdout);
   assert.equal(path.resolve(result.profile).toLowerCase(), profile.toLowerCase());
-  console.log(result.name + ' | ' + result.menu + ' | ' + result.accelerator + ' | visible windows: ' + result.visibleWindows);
+  assert.equal(result.codeLogin, 'native-code-form');
+  assert.equal(result.visibleWindows, 0);
+  console.log(result.name + ' | ' + result.menu + ' | ' + result.accelerator + ' | ' + result.codeLogin + ' | visible windows: ' + result.visibleWindows);
 } finally {
   if (path.dirname(fs.realpathSync(temp)).toLowerCase() === fs.realpathSync(stage).toLowerCase()) {
     fs.rmSync(temp, { recursive: true, force: true, maxRetries: 4, retryDelay: 200 });
