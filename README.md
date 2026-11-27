@@ -1,18 +1,21 @@
 # antigravity-hakimi-win
 
-基于 Google Antigravity App 的 Windows x64 独立增强客户端。首版目标是在独立窗口里使用中文菜单和 Token 用量面板。
+为 Windows x64 构建的独立 Antigravity 客户端。当前开发版可以从 Google Antigravity App 2.35.2 的官方安装器构建便携目录，程序入口为 `Hakimi.exe`。它使用独立的 Electron 应用名称，并在原生菜单中提供“新建窗口”（Ctrl+Shift+N）。
 
-目前已完成官方底包的离线提取和校验，在 Antigravity 2.35.2 上验证通过。独立启动、中文菜单和用量面板仍在开发中。各阶段验收条件见 [Windows x64 立项书](WINDOWS-X64.md)。
+已在 Windows 上以零可见窗口启动实际 EXE，核对其默认菜单、快捷键和 ASAR 完整性设置。主窗口显示、真实点击、登录及与官方客户端同时运行仍待人工验收。Token 用量面板见[项目进度](WINDOWS-X64.md)。
 
-## 本地开发
+## 构建与运行
 
-使用 Windows x64、PowerShell、Windows 自带的 tar.exe 和 Node.js 22.4 或更高版本。下载 [Google 官方 Windows x64 安装器](https://antigravity.google/download)，然后从仓库根目录运行：
+需要 Windows x64、Node.js 22.12 或更新版本、PowerShell 和 Windows 自带的 tar.exe。当前支持的底包是 [Google Antigravity App 2.35.2 Windows x64](https://storage.googleapis.com/antigravity-public/antigravity-hub/2.35.2-4585983447007232/windows-x64/Antigravity-x64.exe)。在仓库根目录运行以下命令，将第一条构建命令的安装器路径替换为本机路径。
 
 ```powershell
+npm ci --ignore-scripts
 .\scripts\stage-windows-x64.ps1 -Installer 'D:\Downloads\Antigravity-x64.exe'
+npm run build:win
 npm test
+npm run check:win
 ```
 
-提取后的开发副本和核验报告位于 `.stage/windows-x64/<版本>/`。
+成品位于 `.stage\Hakimi-win32-x64\Hakimi.exe`。保留整个同级目录，准备好体验时手动启动 EXE。首次构建需要下载 Electron 44.9.1。已存在的同版本底包可跳过提取；再次构建时，先把已有成品目录移走。开发版使用本地构建更新。
 
-ASAR 工具和中文词典源自 [cli117/antigravity-hakimi](https://github.com/cli117/antigravity-hakimi/tree/3bf79d14e769c93dccd83d3e9fe67b6b5876460a)。本仓库从 Windows 移植基线 `8e7f082` 单独建库。
+仓库发布构建工具和项目源码。Google 的应用文件由开发者从官方安装器在本地提取。许可证及上游来源见 [MIT License](LICENSE) 和[第三方说明](THIRD-PARTY-NOTICES.md)。
